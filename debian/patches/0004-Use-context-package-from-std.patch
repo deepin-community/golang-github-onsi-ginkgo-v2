@@ -1,0 +1,28 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Tue, 1 Aug 2023 18:41:21 +0800
+Subject: Use context package from std
+
+---
+ internal/suite.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/internal/suite.go b/internal/suite.go
+index 2b4db48..e8ae920 100644
+--- a/internal/suite.go
++++ b/internal/suite.go
+@@ -1,6 +1,7 @@
+ package internal
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"sync"
+ 	"time"
+@@ -9,7 +10,6 @@ import (
+ 	"github.com/onsi/ginkgo/v2/internal/parallel_support"
+ 	"github.com/onsi/ginkgo/v2/reporters"
+ 	"github.com/onsi/ginkgo/v2/types"
+-	"golang.org/x/net/context"
+ )
+ 
+ type Phase uint

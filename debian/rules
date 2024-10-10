@@ -1,4 +1,22 @@
 #!/usr/bin/make -f
 
+#export DH_VERBOSE=1
+
+# avoid ANSI coloring in build logs
+export GINGKO_COLOR := 0
+
+export DH_GOLANG_INSTALL_EXTRA := \
+	integration/_fixtures ginkgo/outline/_testdata \
+	docs/index.md docs/MIGRATING_TO_V2.md README.md
+
 %:
-	dh $@
+	dh $@ --buildsystem=golang --with=golang --builddir=build
+
+# don't fail tests on slow architectures
+override_dh_auto_test:
+ifeq (,$(filter $(DEB_HOST_ARCH), mips64el riscv64 armel armhf ppc64el s390x))
+	dh_auto_test -- -timeout=1h
+else
+	-dh_auto_test -- -timeout=1h
+endif
+

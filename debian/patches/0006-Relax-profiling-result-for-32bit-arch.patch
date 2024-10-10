@@ -1,0 +1,21 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Wed, 27 Sep 2023 16:01:48 +0800
+Subject: Relax profiling result for 32bit arch
+
+---
+ integration/profiling_test.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/integration/profiling_test.go b/integration/profiling_test.go
+index ff02b22..87e7acd 100644
+--- a/integration/profiling_test.go
++++ b/integration/profiling_test.go
+@@ -236,7 +236,7 @@ var _ = Describe("Profiling Specs", func() {
+ 				memProfile := ParseProfile(pathToBinary("slow_memory_hog"), pathToProfile("slow_memory_hog", "mem.out"))
+ 				// The MemProfile for the slow_memory_hog test should list the slow_memory_hog.SomethingExpensive functions as one of the most memory-consuming functions
+ 				// Assrting on the amount of memory consumed should be stable across tests as the function always builds a large array of this size
+-				Ω(memProfile.FindCaller("slow_memory_hog.SomethingExpensive").CumStat).Should(BeNumerically(">=", 200))
++				Ω(memProfile.FindCaller("slow_memory_hog.SomethingExpensive").CumStat).Should(BeNumerically(">=", 100))
+ 
+ 				blockProfile := ParseProfile(pathToBinary("block_contest"), pathToProfile("block_contest", "block.out"))
+ 				// The BlockProfile for the block_contest test should list two channel-reading functions:
