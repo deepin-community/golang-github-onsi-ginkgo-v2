@@ -1,0 +1,113 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Tue, 1 Aug 2023 18:28:48 +0800
+Subject: Disable sprig template function
+
+github.com/go-task/slim-sprig is not packaged.
+
+Forwarded: not-needed
+---
+ ginkgo/generators/bootstrap_command.go |  3 +--
+ ginkgo/generators/generate_command.go  |  3 +--
+ integration/subcommand_test.go         | 12 ++++++------
+ 3 files changed, 8 insertions(+), 10 deletions(-)
+
+diff --git a/ginkgo/generators/bootstrap_command.go b/ginkgo/generators/bootstrap_command.go
+index 73aff0b..fd580d9 100644
+--- a/ginkgo/generators/bootstrap_command.go
++++ b/ginkgo/generators/bootstrap_command.go
+@@ -7,7 +7,6 @@ import (
+ 	"os"
+ 	"text/template"
+ 
+-	sprig "github.com/go-task/slim-sprig"
+ 	"github.com/onsi/ginkgo/v2/ginkgo/command"
+ 	"github.com/onsi/ginkgo/v2/ginkgo/internal"
+ 	"github.com/onsi/ginkgo/v2/types"
+@@ -118,7 +117,7 @@ func generateBootstrap(conf GeneratorsConfig) {
+ 	}
+ 
+ 	//Setting the option to explicitly fail if template is rendered trying to access missing key
+-	bootstrapTemplate, err := template.New("bootstrap").Funcs(sprig.TxtFuncMap()).Option("missingkey=error").Parse(templateText)
++	bootstrapTemplate, err := template.New("bootstrap").Option("missingkey=error").Parse(templateText)
+ 	command.AbortIfError("Failed to parse bootstrap template:", err)
+ 
+ 	buf := &bytes.Buffer{}
+diff --git a/ginkgo/generators/generate_command.go b/ginkgo/generators/generate_command.go
+index be01dec..def04d9 100644
+--- a/ginkgo/generators/generate_command.go
++++ b/ginkgo/generators/generate_command.go
+@@ -10,7 +10,6 @@ import (
+ 	"strings"
+ 	"text/template"
+ 
+-	sprig "github.com/go-task/slim-sprig"
+ 	"github.com/onsi/ginkgo/v2/ginkgo/command"
+ 	"github.com/onsi/ginkgo/v2/ginkgo/internal"
+ 	"github.com/onsi/ginkgo/v2/types"
+@@ -150,7 +149,7 @@ func generateTestFileForSubject(subject string, conf GeneratorsConfig) {
+ 	}
+ 
+ 	//Setting the option to explicitly fail if template is rendered trying to access missing key
+-	specTemplate, err := template.New("spec").Funcs(sprig.TxtFuncMap()).Option("missingkey=error").Parse(templateText)
++	specTemplate, err := template.New("spec").Option("missingkey=error").Parse(templateText)
+ 	command.AbortIfError("Failed to read parse test template:", err)
+ 
+ 	//Being explicit about failing sooner during template rendering
+diff --git a/integration/subcommand_test.go b/integration/subcommand_test.go
+index 19ee15d..1420ce8 100644
+--- a/integration/subcommand_test.go
++++ b/integration/subcommand_test.go
+@@ -106,7 +106,7 @@ var _ = Describe("Subcommand", func() {
+ 			Ω(content).Should(ContainSubstring("// This is a foo_test test"))
+ 		})
+ 
+-		It("should generate a bootstrap file using a template that contains functions when told to", func() {
++		XIt("should generate a bootstrap file using a template that contains functions when told to", func() {
+ 			fm.WriteFile(pkg, ".bootstrap", `package {{.Package}}
+ 
+ 			import (
+@@ -134,7 +134,7 @@ var _ = Describe("Subcommand", func() {
+ 			Ω(content).Should(ContainSubstring("// This is a foo_testfoo_testfoo_test test"))
+ 		})
+ 
+-		It("should generate a bootstrap file using a template and custom template data when told to", func() {
++		XIt("should generate a bootstrap file using a template and custom template data when told to", func() {
+ 			fm.WriteFile(pkg, ".bootstrap", `package {{.Package}}
+ 
+ 			import (
+@@ -165,7 +165,7 @@ var _ = Describe("Subcommand", func() {
+ 			Ω(content).Should(ContainSubstring("// This is a custom data integration test"))
+ 		})
+ 
+-		It("should fail to render a bootstrap file using a template and custom template data when accessing a missing key", func() {
++		XIt("should fail to render a bootstrap file using a template and custom template data when accessing a missing key", func() {
+ 			fm.WriteFile(pkg, ".bootstrap", `package {{.Package}}
+ 
+ 			import (
+@@ -284,7 +284,7 @@ var _ = Describe("Subcommand", func() {
+ 				Ω(content).Should(ContainSubstring("// This is a foo_bar_test test"))
+ 			})
+ 
+-			It("should generate a test file using a template that contains functions", func() {
++			XIt("should generate a test file using a template that contains functions", func() {
+ 				fm.WriteFile(pkg, ".generate", `package {{.Package}}
+ 				import (
+ 					{{.GinkgoImport}}
+@@ -310,7 +310,7 @@ var _ = Describe("Subcommand", func() {
+ 				Ω(content).Should(ContainSubstring("// This is a foo_bar_testfoo_bar_testfoo_bar_test test"))
+ 			})
+ 
+-			It("should generate a test file using a template and custom data when told to", func() {
++			XIt("should generate a test file using a template and custom data when told to", func() {
+ 				fm.WriteFile(pkg, ".generate", `package {{.Package}}
+ 				import (
+ 					{{.GinkgoImport}}
+@@ -338,7 +338,7 @@ var _ = Describe("Subcommand", func() {
+ 				Ω(content).Should(ContainSubstring(`Label("integration")`))
+ 			})
+ 
+-			It("should fail to render a test file using a template and custom template data when accessing a missing key", func() {
++			XIt("should fail to render a test file using a template and custom template data when accessing a missing key", func() {
+ 				fm.WriteFile(pkg, ".generate", `package {{.Package}}
+ 				import (
+ 					{{.GinkgoImport}}

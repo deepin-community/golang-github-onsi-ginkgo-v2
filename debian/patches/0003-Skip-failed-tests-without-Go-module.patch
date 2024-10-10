@@ -1,0 +1,36 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Fri, 7 Feb 2020 20:56:13 +0800
+Subject: Skip failed tests without Go module
+
+Forwarded: not-needed
+---
+ integration/run_test.go        | 2 +-
+ integration/subcommand_test.go | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/integration/run_test.go b/integration/run_test.go
+index e59c238..ef63979 100644
+--- a/integration/run_test.go
++++ b/integration/run_test.go
+@@ -458,7 +458,7 @@ var _ = Describe("Running Specs", func() {
+ 		})
+ 	})
+ 
+-	Context("when there is a version mismatch between the cli and the test package", func() {
++	XContext("when there is a version mismatch between the cli and the test package", func() {
+ 		It("emits a useful error and tries running", func() {
+ 			fm.MountFixture(("version_mismatch"))
+ 			session := startGinkgo(fm.PathTo("version_mismatch"), "--no-color")
+diff --git a/integration/subcommand_test.go b/integration/subcommand_test.go
+index 1420ce8..e3ba348 100644
+--- a/integration/subcommand_test.go
++++ b/integration/subcommand_test.go
+@@ -547,7 +547,7 @@ var _ = Describe("Subcommand", func() {
+ 		})
+ 	})
+ 
+-	Describe("Go module and ginkgo bootstrap/generate", func() {
++	XDescribe("Go module and ginkgo bootstrap/generate", func() {
+ 		var (
+ 			pkg         string
+ 			savedGoPath string

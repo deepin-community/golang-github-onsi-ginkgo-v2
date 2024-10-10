@@ -1,0 +1,23 @@
+From: Onsi Fakhouri <onsijoe@gmail.com>
+Date: Wed, 21 Aug 2024 12:30:42 -0600
+Subject: make BeSpecEvent duration matcher more forgiving
+Bug-Debian: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1078516
+Bug-Upstream: https://github.com/onsi/ginkgo/issues/1452
+
+---
+ internal/test_helpers/fake_reporter.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/internal/test_helpers/fake_reporter.go b/internal/test_helpers/fake_reporter.go
+index 59a3145..52f3c30 100644
+--- a/internal/test_helpers/fake_reporter.go
++++ b/internal/test_helpers/fake_reporter.go
+@@ -372,7 +372,7 @@ func BeSpecEvent(options ...interface{}) OmegaMatcher {
+ 			matcher = HaveField("Attempt", x)
+ 			description = append(description, fmt.Sprintf("Attempt=%d", x))
+ 		case time.Duration:
+-			matcher = HaveField("Duration", BeNumerically("~", x, time.Duration(float64(x)*0.2)))
++			matcher = HaveField("Duration", BeNumerically("~", x, time.Duration(float64(x)*0.5)))
+ 			description = append(description, "Duration="+x.String())
+ 		case types.NodeType:
+ 			matcher = HaveField("NodeType", x)

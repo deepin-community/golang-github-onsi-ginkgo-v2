@@ -1,0 +1,22 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Wed, 27 Sep 2023 16:02:23 +0800
+Subject: Skip race test on unsupported arch
+
+---
+ integration/verbose_and_succinct_test.go | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/integration/verbose_and_succinct_test.go b/integration/verbose_and_succinct_test.go
+index 8720f24..565d52f 100644
+--- a/integration/verbose_and_succinct_test.go
++++ b/integration/verbose_and_succinct_test.go
+@@ -80,6 +80,9 @@ var _ = Describe("Verbose And Succinct Mode", func() {
+ 			})
+ 
+ 			It("doesn't trigger the race detector", func() {
++				if !raceDetectorSupported() {
++					Skip("race detection is not supported")
++				}
+ 				session := startGinkgo(fm.PathTo("passing_ginkgo_tests"), "--no-color", "-v", "-race")
+ 				Eventually(session).Should(gexec.Exit(0))
+ 				output := session.Out.Contents()

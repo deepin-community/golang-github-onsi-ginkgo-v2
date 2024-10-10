@@ -1,0 +1,10 @@
+0001-Increase-default-test-timeout-to-30m.patch
+0002-Disable-sprig-template-function.patch
+0003-Skip-failed-tests-without-Go-module.patch
+0004-Use-context-package-from-std.patch
+0005-Skip-slow-tests.patch
+0006-Relax-profiling-result-for-32bit-arch.patch
+0007-Skip-race-test-on-unsupported-arch.patch
+0008-chore-test-with-Go-1.22-1352.patch
+0009-make-BeSpecEvent-duration-matcher-more-forgiving.patch
+0010-Allow-disabling-color-with-flag-GINGKO_NOCOLOR.patch

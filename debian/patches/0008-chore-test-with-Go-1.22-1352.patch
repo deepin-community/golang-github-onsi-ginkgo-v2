@@ -1,0 +1,86 @@
+From: George Blue <blgm@users.noreply.github.com>
+Date: Wed, 7 Feb 2024 16:54:28 +0000
+Subject: chore: test with Go 1.22 (#1352)
+
+- Rather than hard-coding the Go version in the workflow, we will use the
+  `stable` and `oldstable` tags which today resolve to 1.22.0 and 1.21.7,
+  but will float as Go versions change.
+- Some anonymous function names seem to have changed in Go 1.22 and a
+  test had to be modified as a result
+---
+ .github/workflows/test.yml           | 4 ++--
+ integration/profiling_go1.21_test.go | 6 ++++++
+ integration/profiling_go1.22_test.go | 6 ++++++
+ integration/profiling_test.go        | 9 +++++----
+ 4 files changed, 19 insertions(+), 6 deletions(-)
+ create mode 100644 integration/profiling_go1.21_test.go
+ create mode 100644 integration/profiling_go1.22_test.go
+
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+index b5d2ca5..91e5402 100644
+--- a/.github/workflows/test.yml
++++ b/.github/workflows/test.yml
+@@ -12,14 +12,14 @@ jobs:
+     steps:
+     - uses: actions/setup-go@v5
+       with:
+-        go-version: '1.20'
++        go-version: 'oldstable'
+     - uses: actions/checkout@v4
+     - run: go mod tidy && git diff --exit-code go.mod go.sum
+   build:
+     runs-on: ubuntu-latest
+     strategy:
+       matrix:
+-        version: [ '1.20', '1.21' ]
++        version: [ 'oldstable', 'stable' ]
+     name: Go ${{ matrix.version }}
+     steps:
+     - uses: actions/setup-go@v5
+diff --git a/integration/profiling_go1.21_test.go b/integration/profiling_go1.21_test.go
+new file mode 100644
+index 0000000..09ec29b
+--- /dev/null
++++ b/integration/profiling_go1.21_test.go
+@@ -0,0 +1,6 @@
++//go:build !go1.22
++
++package integration_test
++
++// lockContestPrefix is the function name prefix with Go 1.21 and earlier
++const lockContestPrefix = "lock_contest_test.glob.."
+diff --git a/integration/profiling_go1.22_test.go b/integration/profiling_go1.22_test.go
+new file mode 100644
+index 0000000..ca8bf19
+--- /dev/null
++++ b/integration/profiling_go1.22_test.go
+@@ -0,0 +1,6 @@
++//go:build go1.22
++
++package integration_test
++
++// lockContestPrefix is the function name prefix with Go 1.22 and later
++const lockContestPrefix = "lock_contest_test.init."
+diff --git a/integration/profiling_test.go b/integration/profiling_test.go
+index 87e7acd..d3e427c 100644
+--- a/integration/profiling_test.go
++++ b/integration/profiling_test.go
+@@ -252,13 +252,14 @@ var _ = Describe("Profiling Specs", func() {
+ 				// The MutexProfile for the lock_contest test should list two functions that wait on a lock.
+ 				// Unfortunately go doesn't seem to capture the names of the functions - so they're listed here as
+ 				// lock_contest_test.glob..func1.1 is called 10 times and takes ~5ms per call
+-				// lock_contest_test.glob..func2.1 is called once and teakes ~500ms per call
++				// lock_contest_test.glob..func2.1 is called once and takes ~500ms per call
++				// Note that in Go 1.22 and later, the functions are called lock_contest_test.init.func1.1 and lock_contest_test.init.func2.1
+ 				// Asserting that both times are within a range should be stable across tests.  The function names should be as well
+ 				// but that might become a source of failure in the future
+ 				// Note: these numbers are adjusted slightly to tolerate variance during test runs
+-				Ω(mutexProfile.FindCaller("lock_contest_test.glob..func1.1").CumStat).Should(BeNumerically(">=", 45))
+-				Ω(mutexProfile.FindCaller("lock_contest_test.glob..func1.1").CumStat).Should(BeNumerically("<", 500))
+-				Ω(mutexProfile.FindCaller("lock_contest_test.glob..func2.1").CumStat).Should(BeNumerically(">=", 450))
++				Ω(mutexProfile.FindCaller(fmt.Sprintf("%sfunc1.1", lockContestPrefix)).CumStat).Should(BeNumerically(">=", 45))
++				Ω(mutexProfile.FindCaller(fmt.Sprintf("%sfunc1.1", lockContestPrefix)).CumStat).Should(BeNumerically("<", 500))
++				Ω(mutexProfile.FindCaller(fmt.Sprintf("%sfunc2.1", lockContestPrefix)).CumStat).Should(BeNumerically(">=", 450))
+ 			},
+ 
+ 			Entry("when running in series",

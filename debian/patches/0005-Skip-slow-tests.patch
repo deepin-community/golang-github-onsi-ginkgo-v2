@@ -1,0 +1,22 @@
+From: Shengjing Zhu <zhsj@debian.org>
+Date: Wed, 2 Aug 2023 01:35:53 +0800
+Subject: Skip slow tests
+
+Forwarded: not-needed
+---
+ integration/watch_test.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/integration/watch_test.go b/integration/watch_test.go
+index a1e08ac..6839324 100644
+--- a/integration/watch_test.go
++++ b/integration/watch_test.go
+@@ -11,7 +11,7 @@ import (
+ 	"github.com/onsi/gomega/gexec"
+ )
+ 
+-var _ = Describe("Watch", Label("SLOW"), func() {
++var _ = XDescribe("Watch", Label("SLOW"), func() {
+ 	var session *gexec.Session
+ 
+ 	BeforeEach(func() {
