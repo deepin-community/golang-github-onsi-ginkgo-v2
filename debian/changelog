@@ -1,3 +1,10 @@
+golang-github-onsi-ginkgo-v2 (2.15.0-6deepin1) unstable; urgency=medium
+
+  * d/patches/0008-chore-test-with-Go-1.22-1352.patch b/debian/patches/0008-chore-test-with-Go-1.22-1352.patch
+    Remove .github/workflows/test.yml related part.
+
+ -- Tianyu Chen <sweetyfish@deepin.org>  Thu, 10 Oct 2024 17:51:15 +0800
+
 golang-github-onsi-ginkgo-v2 (2.15.0-6) unstable; urgency=medium
 
   * Team upload.

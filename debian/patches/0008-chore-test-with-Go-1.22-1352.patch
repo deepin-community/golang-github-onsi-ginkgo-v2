@@ -8,35 +8,13 @@ Subject: chore: test with Go 1.22 (#1352)
 - Some anonymous function names seem to have changed in Go 1.22 and a
   test had to be modified as a result
 ---
- .github/workflows/test.yml           | 4 ++--
  integration/profiling_go1.21_test.go | 6 ++++++
  integration/profiling_go1.22_test.go | 6 ++++++
  integration/profiling_test.go        | 9 +++++----
- 4 files changed, 19 insertions(+), 6 deletions(-)
+ 3 files changed, 17 insertions(+), 4 deletions(-)
  create mode 100644 integration/profiling_go1.21_test.go
  create mode 100644 integration/profiling_go1.22_test.go
 
-diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
-index b5d2ca5..91e5402 100644
---- a/.github/workflows/test.yml
-+++ b/.github/workflows/test.yml
-@@ -12,14 +12,14 @@ jobs:
-     steps:
-     - uses: actions/setup-go@v5
-       with:
--        go-version: '1.20'
-+        go-version: 'oldstable'
-     - uses: actions/checkout@v4
-     - run: go mod tidy && git diff --exit-code go.mod go.sum
-   build:
-     runs-on: ubuntu-latest
-     strategy:
-       matrix:
--        version: [ '1.20', '1.21' ]
-+        version: [ 'oldstable', 'stable' ]
-     name: Go ${{ matrix.version }}
-     steps:
-     - uses: actions/setup-go@v5
 diff --git a/integration/profiling_go1.21_test.go b/integration/profiling_go1.21_test.go
 new file mode 100644
 index 0000000..09ec29b
